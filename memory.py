@@ -1,27 +1,22 @@
-"""Memory, puzzle game of number pairs.
-
-Exercises:
-
-1. Count and print how many taps occur.
-2. Decrease the number of tiles to a 4x4 grid.
-3. Detect when all tiles are revealed.
-4. Center single-digit tile.
-5. Use letters instead of tiles.
-"""
-
 from random import *
 from turtle import *
 
 from freegames import path
 
 car = path('car.gif')
-tiles = list(range(32)) * 2
-state = {'mark': None}
-hide = [True] * 64
-
+# Initialize the game with a set of letters instead of numbers, doubled for pairing
+tiles = list("ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEF") * 2
+state = {'mark': None}  # Track the current marked tile
+hide = [True] * 64  # Track visibility of each tile, initially all are hidden
 
 def square(x, y):
-    """Draw white square with black outline at (x, y)."""
+    """
+    Draw a white square with a black outline at (x, y).
+
+    Parameters:
+    x (int): The x-coordinate of the square.
+    y (int): The y-coordinate of the square.
+    """
     up()
     goto(x, y)
     down()
@@ -32,19 +27,39 @@ def square(x, y):
         left(90)
     end_fill()
 
-
 def index(x, y):
-    """Convert (x, y) coordinates to tiles index."""
+    """
+    Convert (x, y) coordinates to a tile index.
+
+    Parameters:
+    x (int): The x-coordinate.
+    y (int): The y-coordinate.
+
+    Returns:
+    int: The index of the tile in the tiles list.
+    """
     return int((x + 200) // 50 + ((y + 200) // 50) * 8)
 
-
 def xy(count):
-    """Convert tiles count to (x, y) coordinates."""
+    """
+    Convert a tile index to (x, y) coordinates.
+
+    Parameters:
+    count (int): The index of the tile.
+
+    Returns:
+    tuple: The (x, y) coordinates of the tile.
+    """
     return (count % 8) * 50 - 200, (count // 8) * 50 - 200
 
-
 def tap(x, y):
-    """Update mark and hidden tiles based on tap."""
+    """
+    Handle tap events, updating marks and hidden tiles.
+
+    Parameters:
+    x (int): The x-coordinate of the tap.
+    y (int): The y-coordinate of the tap.
+    """
     spot = index(x, y)
     mark = state['mark']
 
@@ -55,9 +70,10 @@ def tap(x, y):
         hide[mark] = False
         state['mark'] = None
 
-
 def draw():
-    """Draw image and tiles."""
+    """
+    Draw the image and tiles, updating the game's visual state.
+    """
     clear()
     goto(0, 0)
     shape(car)
@@ -69,18 +85,17 @@ def draw():
             square(x, y)
 
     mark = state['mark']
-
     if mark is not None and hide[mark]:
         x, y = xy(mark)
         up()
-        goto(x + 2, y)
+        goto(x + 25, y + 10)  # Centering the text
         color('black')
-        write(tiles[mark], font=('Arial', 30, 'normal'))
+        write(tiles[mark], align="center", font=('Arial', 30, 'normal'))
 
     update()
     ontimer(draw, 100)
 
-
+# Game initialization
 shuffle(tiles)
 setup(420, 420, 370, 0)
 addshape(car)
