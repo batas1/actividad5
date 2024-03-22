@@ -6,7 +6,7 @@ from freegames import path
 car = path('car.gif')
 # Initialize the game with a set of letters instead of numbers, doubled for pairing
 tiles = list("ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEF") * 2
-state = {'mark': None}  # Track the current marked tile
+state = {'mark': None, 'taps' : 0}  # Track the current marked tile
 hide = [True] * 64  # Track visibility of each tile, initially all are hidden
 
 def square(x, y):
@@ -28,40 +28,19 @@ def square(x, y):
     end_fill()
 
 def index(x, y):
-    """
-    Convert (x, y) coordinates to a tile index.
-
-    Parameters:
-    x (int): The x-coordinate.
-    y (int): The y-coordinate.
-
-    Returns:
-    int: The index of the tile in the tiles list.
-    """
     return int((x + 200) // 50 + ((y + 200) // 50) * 8)
 
 def xy(count):
-    """
-    Convert a tile index to (x, y) coordinates.
-
-    Parameters:
-    count (int): The index of the tile.
-
-    Returns:
-    tuple: The (x, y) coordinates of the tile.
-    """
     return (count % 8) * 50 - 200, (count // 8) * 50 - 200
 
 def tap(x, y):
-    """
-    Handle tap events, updating marks and hidden tiles.
-
-    Parameters:
-    x (int): The x-coordinate of the tap.
-    y (int): The y-coordinate of the tap.
-    """
     spot = index(x, y)
     mark = state['mark']
+
+    if spot not in range(64) or not hide[spot]:
+        return  # Ignora taps fuera de los cuadros o en cuadros ya descubiertos
+
+    state['taps'] += 1  # Incrementa el contador de taps
 
     if mark is None or mark == spot or tiles[mark] != tiles[spot]:
         state['mark'] = spot
@@ -88,9 +67,13 @@ def draw():
     if mark is not None and hide[mark]:
         x, y = xy(mark)
         up()
-        goto(x + 25, y + 10)  # Centering the text
+        goto(x + 25, y + 5)  # Centering the text
         color('black')
         write(tiles[mark], align="center", font=('Arial', 30, 'normal'))
+
+    goto(150, 120)  # Puedes ajustar esta posición según necesites
+    color('black')
+    write("Taps: " + str(state['taps']), align="center", font=('Arial', 20, 'normal'))
 
     update()
     ontimer(draw, 100)
