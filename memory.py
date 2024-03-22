@@ -49,6 +49,9 @@ def tap(x, y):
         hide[mark] = False
         state['mark'] = None
 
+    if all(not h for h in hide):  # Verifica si todos los cuadros están descubiertos
+        print("Todos los cuadros han sido descubiertos!")
+
 def draw():
     """
     Draw the image and tiles, updating the game's visual state.
@@ -71,7 +74,7 @@ def draw():
         color('black')
         write(tiles[mark], align="center", font=('Arial', 30, 'normal'))
 
-    goto(150, 120)  # Puedes ajustar esta posición según necesites
+    goto(150, 120)  
     color('black')
     write("Taps: " + str(state['taps']), align="center", font=('Arial', 20, 'normal'))
 
